@@ -1,0 +1,26 @@
+[build]
+  command = "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend"
+  publish = "frontend/build"
+  functions = "backend/functions"
+
+[build.environment]
+  # Create React App treats warnings as errors when CI=true; keep the deploy from failing on lint warnings.
+  CI = "false"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["express", "cors", "dotenv", "serverless-http"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  NODE_VERSION = "20"
+
