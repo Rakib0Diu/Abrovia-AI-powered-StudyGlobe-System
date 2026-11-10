@@ -1,0 +1,532 @@
+# MASTER IMPLEMENTATION PROMPT — StudyGlobe (Study Abroad Preparation System)
+
+> **Provenance legend (read first, do not skip).** Every requirement below is tagged one of three ways:
+> - **[SOURCE]** – taken verbatim from the original project's config/README. Reproduce exactly.
+> - **[INFERRED]** – derived from the original README's stated behaviour. Implement as written.
+> - **[DECIDED]** – the original detail was not available; this prompt fixes a concrete choice so you do not have to guess. Implement as written and do not substitute alternatives.
+>
+> You are an expert full-stack engineer. This document is a reference specification for the Abrovia-Your AI powered study companion project. DO NOT generate the entire project at once. Only implement the specific files or tasks requested by the user in the chat, following the contracts and schemas defined here.
+
+---
+
+## 1. SYSTEM & TECH STACK OVERVIEW
+
+### 1.1 Product
+**StudyGlobe** is a full-stack web app that helps students prepare to study abroad. Students explore countries, universities and programs, check intake dates and language requirements, and see which scholarships they may qualify for. Admins manage all catalog data. [SOURCE]
+
+### 1.2 Stack [SOURCE unless noted]
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, React Router v6, Tailwind CSS, Axios, bootstrapped with Create React App (`react-scripts`) |
+| Backend | Node.js (≥ 18, 20 recommended), Express.js |
+| Database | PostgreSQL hosted on Supabase |
+| Auth | Supabase Auth (JWT access + refresh tokens) |
+| Hosting | Netlify (frontend static + Express as one serverless function) and/or Vercel (experimental services) |
+
+Pinned versions [DECIDED]:
+- Frontend: `react@^18.2.0`, `react-dom@^18.2.0`, `react-router-dom@^6.22.0`, `react-scripts@5.0.1`, `axios@^1.6.0`, dev: `tailwindcss@^3.4.0`, `postcss@^8`, `autoprefixer@^10`. **Tailwind 3.x, not 4.**
+- Backend: **CommonJS** (`require` / `module.exports`, no ESM, no TypeScript), `express@^4.18.2`, `cors@^2.8.5`, `dotenv@^16.4.0`, `serverless-http@^3.2.0`, `@supabase/supabase-js@^2.39.0`, dev: `nodemon@^3`. Set `"engines": {"node": ">=18"}`.
+- **No** validation library, ORM, UI kit, state library, or TypeScript. Validation is hand-written helper functions. State is React Context only.
+
+### 1.3 Design system [DECIDED — the original stylesheet was not available]
+- **Mode:** light mode only. Do not implement dark mode or a theme provider.
+- **Font:** Inter via Google Fonts `<link>` in `public/index.html`; Tailwind `fontFamily.sans = ['Inter', 'system-ui', 'sans-serif']`.
+- **Palette** (extend in `tailwind.config.js` under `theme.extend.colors`):
+  - `primary`: 50 `#eff6ff`, 100 `#dbeafe`, 500 `#3b82f6`, 600 `#2563eb`, 700 `#1d4ed8`, 900 `#1e3a8a`
+  - Neutrals: Tailwind `slate` (page background `slate-50`, text `slate-800`, muted `slate-500`, borders `slate-200`)
+  - Success `emerald-600` / bg `emerald-50`; Danger `red-600` / bg `red-50`; Warning `amber-600` / bg `amber-50`
+- **Layout grid:** page container `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`; vertical rhythm `py-8`; card grids `grid gap-6 sm:grid-cols-2 lg:grid-cols-3`.
+- **Surfaces:** cards `bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition`; inputs `w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500`; primary button `bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-2 font-medium disabled:opacity-50`; secondary button `bg-white border border-slate-300 text-slate-700 hover:bg-slate-50`.
+- Responsive: mobile-first; navbar collapses to a hamburger below `md`.
+- Add `@tailwind base; @tailwind components; @tailwind utilities;` to `src/index.css`, plus `body { @apply bg-slate-50 text-slate-800; }`.
+
+### 1.4 Environment variables [SOURCE]
+| Where | Variable | Purpose |
+|---|---|---|
+| `backend/.env` | `SUPABASE_URL` | Supabase Project URL |
+| `backend/.env` | `SUPABASE_SERVICE_KEY` | **service_role** key (never anon, never in frontend) |
+| `backend/.env` | `PORT` | Optional, default `5000` [DECIDED] |
+| `backend/.env` | `CLIENT_URL` | Optional extra CORS origin [DECIDED] |
+| `frontend/.env` | `REACT_APP_API_URL` | Local dev: `http://localhost:5000/api`. **Unset in production** → app falls back to `/api` |
+
+Create `backend/.env.example` containing the first four variables with placeholder values.
+
+---
+
+## 2. FULL FILE TREE & DIRECTORY STRUCTURE
+
+Create exactly this layout [SOURCE for names listed in README; [DECIDED] for files marked ✱].
+
+```
+StudyGlobe_Capstone_Project/
+├── backend/
+│   ├── app.js                      Express app: CORS, JSON body, route mounting, 404, error handler. Exports `app` (does NOT listen)
+│   ├── server.js                   Local entry: loads dotenv, app.listen(PORT)  (npm start / npm run dev)
+│   ├── package.json ✱
+│   ├── .env.example
+│   ├── config/
+│   │   └── supabase.js             Supabase client factory using service_role key
+│   ├── middleware/
+│   │   └── auth.js                 requireAuth, requireAdmin
+│   ├── utils/ ✱
+│   │   ├── validate.js             tiny validators (isEmail, isNumberInRange, pick, etc.)
+│   │   └── asyncHandler.js         wraps async route handlers → next(err)
+│   ├── routes/
+│   │   ├── auth.js                 register, login, refresh, me
+│   │   ├── profile.js
+│   │   ├── countries.js
+│   │   ├── universities.js
+│   │   ├── programs.js
+│   │   ├── intakes.js
+│   │   ├── languageRequirements.js
+│   │   ├── scholarships.js         incl. POST /assess
+│   │   └── admin.js                generic CRUD over whitelisted tables
+│   ├── functions/
+│   │   └── api.js                  Netlify Function wrapper (serverless-http)
+│   └── database/
+│       └── setup.sql               tables, indexes, RLS policies, trigger, sample data (idempotent)
+├── frontend/
+│   ├── package.json ✱
+│   ├── tailwind.config.js ✱
+│   ├── postcss.config.js ✱
+│   ├── public/
+│   │   └── index.html
+│   └── src/
+│       ├── index.js
+│       ├── index.css
+│       ├── App.js                  Router + layout + route table
+│       ├── services/
+│       │   └── api.js              Axios instance + token interceptors + endpoint helper functions
+│       ├── context/
+│       │   └── AuthContext.js
+│       ├── components/
+│       │   ├── Navbar.js
+│       │   ├── ProtectedRoute.js
+│       │   └── UI.js               exports: Spinner, ErrorAlert, EmptyState, PageHeader, Badge, Card, FormField
+│       └── pages/
+│           ├── Home.js
+│           ├── Login.js
+│           ├── Register.js
+│           ├── Profile.js
+│           ├── Countries.js
+│           ├── Universities.js
+│           ├── UniversityDetails.js
+│           ├── Programs.js
+│           └── Admin.js
+├── netlify.toml                    (verbatim, see 2.1)
+├── vercel.json                     (verbatim, see 2.2)
+├── .gitignore                      (verbatim, see 2.3)
+└── README.md                       (setup + API docs, see 6 Phase 4 final step)
+```
+
+### 2.1 `netlify.toml` — write verbatim [SOURCE]
+```toml
+[build]
+  command = "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend"
+  publish = "frontend/build"
+  functions = "backend/functions"
+
+[build.environment]
+  # Create React App treats warnings as errors when CI=true; keep the deploy from failing on lint warnings.
+  CI = "false"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["express", "cors", "dotenv", "serverless-http"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production.environment]
+  NODE_VERSION = "20"
+```
+
+### 2.2 `vercel.json` — write verbatim [SOURCE]
+```json
+{
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "create-react-app"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/api"
+    }
+  }
+}
+```
+
+### 2.3 `.gitignore` — write verbatim [SOURCE]
+```
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+```
+
+### 2.4 Package scripts [DECIDED]
+- `backend/package.json`: `"main": "server.js"`, scripts `start: node server.js`, `dev: nodemon server.js`.
+- `frontend/package.json`: scripts `start`, `build`, `test`, `eject` as in CRA. Add `"proxy"` **only if** you want it; do not — the app uses `REACT_APP_API_URL`.
+- Note: because `netlify.toml` bundles with esbuild and marks only `express, cors, dotenv, serverless-http` as external, `@supabase/supabase-js` is bundled into the function. All five must be listed in `backend/package.json` dependencies.
+
+---
+
+## 3. DATA LAYER & SCHEMAS
+
+Database: PostgreSQL on Supabase. Everything lives in the `public` schema. **`backend/database/setup.sql` must be fully idempotent** ("safe to re-run" [SOURCE]): use `create table if not exists`, `create index if not exists`, `drop policy if exists` before each `create policy`, `create or replace function`, `drop trigger if exists`, and `insert ... on conflict do nothing` for seed data (use unique constraints on natural keys, listed below).
+
+### 3.1 Tables [INFERRED from API surface; column names are [DECIDED]]
+
+Catalog tables use `bigint generated by default as identity` primary keys. Only `profiles` uses a `uuid`.
+
+**`profiles`**
+| Column | Type | Notes |
+|---|---|---|
+| `id` | `uuid` PK | `references auth.users(id) on delete cascade` |
+| `email` | `text` | unique, not null (the README admin query matches on it) [SOURCE] |
+| `full_name` | `text` | |
+| `phone` | `text` | |
+| `nationality` | `text` | |
+| `education_level` | `text` | e.g. High School / Bachelor / Master |
+| `gpa` | `numeric(3,2)` | check 0–4 (4.0 scale [SOURCE]) |
+| `ielts_score` | `numeric(2,1)` | check 0–9 |
+| `preferred_country_id` | `bigint` | FK → `countries(id)` on delete set null |
+| `preferred_degree_level` | `text` | |
+| `preferred_field` | `text` | |
+| `budget_max` | `numeric` | max tuition per year (USD) |
+| `is_admin` | `boolean` | not null default `false` [SOURCE] |
+| `created_at` / `updated_at` | `timestamptz` | default `now()` |
+
+**`countries`**: `id`, `name` (unique, not null), `code` (text, 2-letter ISO), `capital`, `region`, `official_language`, `currency`, `flag_emoji`, `description`, `living_cost_monthly` (numeric, USD), `visa_info` (text), `created_at`.
+
+**`universities`**: `id`, `country_id` (FK → countries, on delete cascade, not null), `name` (not null), `city`, `description`, `website`, `world_ranking` (int, nullable), `tuition_min` (numeric, USD/yr), `tuition_max` (numeric, USD/yr), `student_count` (int), `founded_year` (int), `logo_url`, `created_at`. Unique `(country_id, name)`. Indexes: `country_id`, `lower(name)`, `tuition_min`, `tuition_max`.
+
+**`programs`**: `id`, `university_id` (FK → universities, cascade, not null), `name` (not null), `degree_level` (check in `'Bachelor','Master','PhD','Diploma'`), `field` (text), `duration_months` (int), `tuition_per_year` (numeric), `description`, `created_at`. Unique `(university_id, name, degree_level)`. Indexes: `university_id`, `degree_level`, `field`.
+
+**`intakes`**: `id`, `university_id` (FK, cascade, not null), `name` (e.g. "Fall 2027"), `season` (text: Spring/Summer/Fall/Winter), `start_date` (date), `application_deadline` (date), `is_open` (boolean default true), `created_at`. Unique `(university_id, name)`. Index on `university_id`.
+
+**`language_requirements`**: `id`, `university_id` (FK, cascade, not null), `test_name` (check in `'IELTS','TOEFL iBT','PTE Academic','Duolingo'`), `min_overall` (numeric), `min_each_band` (numeric, nullable), `degree_level` (text, nullable = all levels), `notes`, `created_at`. Unique `(university_id, test_name, degree_level)`. Index on `university_id`.
+
+**`scholarships`**: `id`, `university_id` (FK, cascade, **nullable** → null means country-wide/general), `country_id` (FK, set null, nullable), `name` (not null), `description`, `amount` (numeric, nullable), `coverage` (text, e.g. "Full tuition", "50% tuition"), `min_gpa` (numeric, nullable), `min_ielts` (numeric, nullable), `degree_level` (text, nullable = any), `deadline` (date), `url`, `created_at`. Unique `(name, university_id)`.
+
+### 3.2 Auth sync trigger [DECIDED]
+`public.handle_new_user()` (`security definer`, `set search_path = public`) inserts a `profiles` row (`id`, `email`, `full_name` from `raw_user_meta_data->>'full_name'`) `on conflict (id) do nothing`; attach `after insert on auth.users`. The backend register route ALSO upserts the profile so it works even if the trigger is absent.
+
+### 3.3 Row Level Security [SOURCE: "security policies", FR-10 "RLS"]
+Enable RLS on **all** tables.
+- Catalog tables (`countries, universities, programs, intakes, language_requirements, scholarships`): policy `"Public read"` → `for select using (true)`. No insert/update/delete policies for anon/authenticated (writes only happen through the backend using `service_role`, which bypasses RLS).
+- `profiles`: `select` / `update` own row `using (auth.uid() = id)`; no delete; the update policy `with check` must also keep `is_admin` unchanged: `with check (auth.uid() = id and is_admin = (select is_admin from public.profiles p where p.id = auth.uid()))`.
+
+### 3.4 Seed data [SOURCE: "universities are real, but the fees, deadlines, language scores and scholarships are illustrative placeholders"]
+Insert at least the following (use these exact names; invent plausible **placeholder** numbers; deadlines in the near future relative to 2027):
+
+**Countries (8):** United States (US), United Kingdom (GB), Canada (CA), Australia (AU), Germany (DE), Japan (JP), Malaysia (MY), South Korea (KR) — each with capital, region, official_language, currency, flag emoji, 1–2 sentence description, `living_cost_monthly`, short `visa_info`.
+
+**Universities (16, two per country):**
+US: Massachusetts Institute of Technology (Cambridge), Arizona State University (Tempe) ·
+UK: University of Oxford (Oxford), University of Manchester (Manchester) ·
+CA: University of Toronto (Toronto), University of British Columbia (Vancouver) ·
+AU: University of Melbourne (Melbourne), Monash University (Melbourne) ·
+DE: Technical University of Munich (Munich), Heidelberg University (Heidelberg) ·
+JP: University of Tokyo (Tokyo), Kyoto University (Kyoto) ·
+MY: Universiti Malaya (Kuala Lumpur), Monash University Malaysia (Subang Jaya) ·
+KR: Seoul National University (Seoul), KAIST (Daejeon).
+Each with description, website, `world_ranking`, `tuition_min/max`, `student_count`, `founded_year`.
+
+**Programs:** 3–4 per university covering all four degree levels overall and fields such as Computer Science, Engineering, Business, Data Science, Medicine/Health, Social Sciences, Architecture.
+**Intakes:** 2 per university (e.g. "Fall 2027", "Spring 2028") with start dates and application deadlines.
+**Language requirements:** 1–2 rows per university (IELTS always present; TOEFL iBT or PTE for some). Typical `min_overall` 6.0–7.5.
+**Scholarships:** ≥ 10 rows, mixing university-specific (e.g. "MIT Need-Based Aid", "Monash International Merit Scholarship") and country-level (e.g. "Chevening-style Government Award", "DAAD-style Study Grant" — use generic placeholder names that don't claim to be the official programs) with varied `min_gpa` (2.5–3.8), `min_ielts` (5.5–7.0), `degree_level` (some null).
+
+Resolve foreign keys in seed inserts by subquery on `name` (e.g. `(select id from countries where name = 'Canada')`), never hard-coded ids.
+
+---
+
+## 4. BACKEND ARCHITECTURE & API CONTRACTS
+
+### 4.1 App bootstrap (`app.js`) [INFERRED + DECIDED]
+1. `app = express()`; `app.use(cors({ origin: true-ish }))` → allow `http://localhost:3000`, `process.env.CLIENT_URL`, and (for same-origin Netlify/Vercel traffic) requests with no `Origin` header. `credentials: false`.
+2. `app.use(express.json({ limit: '1mb' }))`.
+3. Build one `const api = express.Router()` and mount all route modules on it (paths in 4.4). Then **mount the router at three prefixes** so all hosting modes work: `app.use('/api', api)`, `app.use('/', api)`. (`/` covers Vercel, which may strip the `/api` prefix.)
+4. `GET /health` on the router → `200 {"status":"ok"}` [SOURCE: reachable at `/api/health`].
+5. 404 handler: `404 {"error":"Route not found"}`.
+6. Error handler (4-arg): log `err`, respond `err.status || 500` with `{"error": err.message}`; for 500 use the generic message `"Internal server error"`. Never leak stack traces.
+7. `module.exports = app;` — **`app.js` never calls `listen`.**
+
+`server.js`: `require('dotenv').config(); const app = require('./app'); app.listen(process.env.PORT || 5000, ...)` and logs the URL.
+
+### 4.2 Netlify function wrapper (`functions/api.js`) [SOURCE: serverless-http] 
+```
+const serverless = require('serverless-http');
+const app = require('../app');
+// Netlify redirect delivers paths as /.netlify/functions/api/<splat>; normalise to /api/<splat>.
+const handler = serverless(app);
+exports.handler = async (event, context) => {
+  event.path = event.path.replace(/^\/\.netlify\/functions\/api/, '/api');
+  return handler(event, context);
+};
+```
+(Write this behaviour; keep `require('dotenv').config()` out of the function — Netlify injects env vars.) `config/supabase.js` must throw a clear error at import time if `SUPABASE_URL` or `SUPABASE_SERVICE_KEY` is missing.
+
+### 4.3 Supabase client (`config/supabase.js`)
+Export `supabase` = `createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, { auth: { persistSession: false, autoRefreshToken: false } })` for all DB queries, and a function `createAuthClient()` that returns a **fresh** client with the same options. Use `createAuthClient()` for `signInWithPassword` and `refreshSession` so user sessions never leak into the shared service client.
+
+### 4.4 Authentication & authorization flow [SOURCE: Supabase Auth JWT, `requireAuth` / `requireAdmin`]
+- Tokens: Supabase access token (JWT) sent by the client as `Authorization: Bearer <access_token>`. Refresh token is stored client-side and exchanged at `/auth/refresh`.
+- **`requireAuth`**: read bearer token (missing/malformed → `401 {"error":"Authentication required"}`); `supabase.auth.getUser(token)`; on error/no user → `401 {"error":"Invalid or expired token"}`; load the user's `profiles` row (service client); set `req.user = { id, email }` and `req.profile = profileRow`; `next()`.
+- **`requireAdmin`**: must run after `requireAuth`; if `!req.profile?.is_admin` → `403 {"error":"Admin access required"}`.
+
+### 4.5 Response & error conventions [DECIDED]
+- Success single resource: `{ "data": { ... } }`. Success list: `{ "data": [ ... ], "count": <int> }`.
+- Auth endpoints return flat objects as documented below.
+- Errors always `{ "error": "<message>" }`; validation errors may add `"details": ["field: reason", ...]`.
+- Status codes: `200` OK, `201` created, `400` validation, `401` unauthenticated / bad credentials, `403` not admin, `404` not found, `409` duplicate, `500` unexpected.
+- Supabase/Postgres errors: map `23505` → 409 "Already exists", `23503` → 400 "Referenced record does not exist", others → 500.
+- Validate path ids as positive integers (`400 "Invalid id"` otherwise). Trim all strings. Reject unknown body fields silently (allow-list with `pick`).
+
+### 4.6 Endpoints (all under `/api`) — 🔒 login required, 🛡️ admin only
+
+**Auth (FR-01)**
+
+| # | Request | Success | Errors |
+|---|---|---|---|
+| 1 | `POST /auth/register` body `{ "email", "password", "full_name" }` | `201` `{ "user": {"id","email"}, "profile": {...}, "access_token", "refresh_token", "expires_at" }` | 400 invalid email / password < 6 chars / missing full_name; 409 `"Email already registered"` |
+| 2 | `POST /auth/login` body `{ "email", "password" }` | `200` same shape as register | 400 missing fields; 401 `"Invalid email or password"` |
+| 3 | `POST /auth/refresh` body `{ "refresh_token" }` | `200` `{ "access_token", "refresh_token", "expires_at" }` | 400 missing; 401 `"Invalid refresh token"` |
+| 4 | `GET /auth/me` 🔒 | `200` `{ "user": {"id","email"}, "profile": {...} }` | 401 |
+
+Register logic: validate → `supabase.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { full_name } })` (so no email confirmation is required) → upsert `profiles` row → sign in via `createAuthClient().auth.signInWithPassword` → return session. Login logic: sign in via `createAuthClient()`, then load profile and return it (profile contains `is_admin`).
+
+**Profile (FR-02)**
+
+| Request | Success |
+|---|---|
+| `GET /profile` 🔒 | `200 { "data": <profile> }` |
+| `PUT /profile` 🔒 | `200 { "data": <updated profile> }` |
+
+`PUT` allow-list: `full_name, phone, nationality, education_level, gpa (0–4), ielts_score (0–9), preferred_country_id, preferred_degree_level, preferred_field, budget_max (≥0)`. Empty string → `null`. **Never** accept `id`, `email`, `is_admin`. Set `updated_at = now()`. 400 on out-of-range values.
+
+**Countries (FR-03)**
+- `GET /countries` → `{ data: [country…], count }` ordered by `name`. Optional `?search=` (ilike on name).
+- `GET /countries/:id` → `{ data: country }` or 404.
+
+**Universities (FR-04, FR-05, FR-11)**
+- `GET /universities` → `{ data: [university + country{ id,name,code,flag_emoji }], count }`. Query params, all optional and combinable [SOURCE names]: `country_id`, `search` (ilike on `name` OR `city`), `min_tuition`, `max_tuition`, `degree_level`, `field`, `sort`.
+  - Tuition filter = **range overlap** [DECIDED]: `tuition_max >= min_tuition` AND `tuition_min <= max_tuition`.
+  - `degree_level` / `field`: first query `programs` for matching `university_id`s (`field` uses ilike), then restrict universities with `.in('id', ids)`; if no matches return `{ data: [], count: 0 }`.
+  - `sort` ∈ `name` (default, A→Z), `tuition_asc` (by `tuition_min` asc), `tuition_desc` (by `tuition_max` desc), `ranking` (`world_ranking` asc, nulls last). Invalid value → fall back to `name`.
+- `GET /universities/country/:countryId` → same shape, filtered by country.
+- `GET /universities/:id` → `{ data: university + country{…full} }` or 404.
+- **Route order matters:** register `/country/:countryId` before `/:id`.
+
+**Programs (FR-06)**
+- `GET /programs` → `{ data: [program + university{ id,name,city, country_id }], count }`; filters `university_id`, `degree_level`, `field`, `search` (ilike name), `limit` (default 100, max 500).
+- `GET /programs/fields` → `{ data: ["Business","Computer Science", …] }` (distinct, non-null, sorted). Register before `/:id`.
+- `GET /programs/university/:id` → `{ data, count }` for one university, ordered by `degree_level`, `name`.
+- `GET /programs/:id` → `{ data: program + university }` or 404.
+
+**Intakes (FR-07)**
+- `GET /intakes/university/:id` → `{ data: [intake…], count }` ordered by `start_date` asc.
+
+**Language requirements (FR-08)**
+- `GET /language-requirements/university/:id` → `{ data: [row…], count }` ordered by `test_name`.
+
+**Scholarships (FR-09)**
+- `GET /scholarships` → `{ data: [scholarship + university{id,name}], count }`, ordered by `deadline` asc nulls last.
+- `GET /scholarships/university/:id` → scholarships where `university_id = :id` **plus** general ones (`university_id is null`) whose `country_id` equals that university's country.
+- `POST /scholarships/assess` (public, no auth required) body: `{ "gpa": number 0–4, "ielts": number 0–9 (optional), "degree_level": string (optional), "university_id": int (optional), "country_id": int (optional) }`.
+  - Candidate set: all scholarships, narrowed by `university_id` (using the same inclusion rule as above) or `country_id` if provided.
+  - For each candidate compute `reasons` (string array) and `eligible`:
+    - If `min_gpa` set and `gpa < min_gpa` → reason `"GPA below required {min_gpa}"`.
+    - If `min_ielts` set and (`ielts` missing or `ielts < min_ielts`) → reason `"IELTS below required {min_ielts}"` (missing → `"IELTS score required ({min_ielts})"`).
+    - If scholarship `degree_level` set and request `degree_level` set and they differ (case-insensitive) → reason `"Only for {degree_level} students"`.
+    - `eligible = reasons.length === 0`.
+  - Response `200`: `{ "data": { "eligible": [ {scholarship…} ], "not_eligible": [ { scholarship…, "reasons": [..] } ], "summary": { "total": n, "eligible_count": n } } }`. `400` if `gpa` missing/out of range.
+
+**Admin (FR-10) 🛡️** — `requireAuth` then `requireAdmin` on every route.
+- Table whitelist (anything else → `404 {"error":"Unknown table"}`): `countries, universities, programs, intakes, language_requirements, scholarships`. (`profiles` is NOT manageable here.)
+- `GET /admin/:table` → `{ data, count }` (supports `?limit` default 200, `?search=` ilike on `name` where the column exists).
+- `GET /admin/:table/:id` → `{ data }` or 404.
+- `POST /admin/:table` body = row fields → `201 { data: created }`.
+- `PUT /admin/:table/:id` body = partial fields → `200 { data: updated }`.
+- `DELETE /admin/:table/:id` → `200 { "message": "Deleted" }`.
+- Strip `id` and `created_at` from payloads; allow only columns listed per table in a `COLUMNS` map inside `routes/admin.js` (the columns from Section 3.1). Coerce `""` → `null` for non-text columns. Required column per table: `name` (all tables), plus `country_id` for universities, `university_id` for programs/intakes/language_requirements.
+
+### 4.7 Business-logic rules summary
+1. GPA scale is **4.0** everywhere [SOURCE].
+2. Only the backend holds the service_role key; the frontend never talks to Supabase directly [SOURCE].
+3. `is_admin` can only be changed via SQL in the Supabase editor, never via the API [SOURCE].
+4. After an admin flag changes, a fresh login returns `is_admin: true` and the Admin link appears [SOURCE].
+5. All list endpoints must be safe on empty tables (return `[]`, `count: 0`).
+
+---
+
+## 5. FRONTEND ARCHITECTURE & COMPONENT BREAKDOWN
+
+### 5.1 Routing (React Router v6 in `App.js`) [INFERRED]
+Wrap the app in `<BrowserRouter><AuthProvider>`. Layout: `<Navbar/>` on top, `<main className="min-h-screen">` with `<Routes>`, a simple footer (`© StudyGlobe`).
+
+| Path | Page | Access |
+|---|---|---|
+| `/` | Home | public |
+| `/login` | Login | public (redirect to `/` if already logged in) |
+| `/register` | Register | public (same redirect) |
+| `/profile` | Profile | `<ProtectedRoute>` |
+| `/countries` | Countries | public |
+| `/universities` | Universities (supports `?country_id=`, `?search=` and all filters in query string) | public |
+| `/universities/:id` | UniversityDetails | public |
+| `/programs` | Programs | public |
+| `/admin` | Admin | `<ProtectedRoute adminOnly>` |
+| `*` | NotFound (inline simple component in App.js: "Page not found" + link home) | public |
+
+### 5.2 API client (`services/api.js`) [SOURCE: "Axios instance + token interceptors"]
+- `const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || '/api', timeout: 20000 })`.
+- **Storage keys** (localStorage) [DECIDED]: `sg_access_token`, `sg_refresh_token`, `sg_user`.
+- **Request interceptor:** if an access token exists, set `Authorization: Bearer <token>`.
+- **Response interceptor:** on `401` for a request that is not `/auth/login`, `/auth/register` or `/auth/refresh` and has not been retried: call `POST /auth/refresh` once (single in-flight promise shared by concurrent requests), store new tokens, retry the original request. If refresh fails → clear storage and `window.location.assign('/login')`.
+- **Network failure** (`!error.response`): reject with `Error("Cannot reach the server. Is the backend running?")` [SOURCE troubleshooting text: "Cannot reach the server"].
+- Normalise other errors to `Error(error.response.data.error || 'Something went wrong')`.
+- Export small helpers, one per endpoint, returning `response.data`: `authApi.{register,login,me}`, `profileApi.{get,update}`, `countriesApi.{list,get}`, `universitiesApi.{list,get,byCountry}`, `programsApi.{list,get,fields,byUniversity}`, `intakesApi.byUniversity`, `languageApi.byUniversity`, `scholarshipsApi.{list,byUniversity,assess}`, `adminApi.{list,create,update,remove}`.
+
+### 5.3 State management (`context/AuthContext.js`) [SOURCE: AuthContext]
+React Context only. Provides `{ user, profile, isAuthenticated, isAdmin, loading, login(email,pw), register(email,pw,fullName), logout(), updateProfile(fields), refreshProfile() }`.
+- On mount: if an access token exists, call `GET /auth/me`; success → set user/profile; failure → clear. `loading` is `true` until this completes (ProtectedRoute shows a spinner meanwhile).
+- `login`/`register` store `access_token`, `refresh_token`, user; set profile from the response.
+- `isAdmin = Boolean(profile?.is_admin)`.
+- `logout` clears storage and state and navigates to `/`.
+
+### 5.4 Shared components
+- **`Navbar`**: sticky, white, `border-b`, logo text "🌍 StudyGlobe" in `text-primary-700 font-bold` linking `/`. Links (NavLink, active = `text-primary-600 font-semibold`): Home, Countries, Universities, Programs. Authenticated: Profile, **Admin (only if `isAdmin`)**, and a "Log out" button. Guest: "Log in" (secondary button) and "Sign up" (primary button). Hamburger toggles a stacked menu below `md`. Shows the user's first name when logged in.
+- **`ProtectedRoute({ children, adminOnly })`**: while `loading` render `<Spinner/>`; if not authenticated → `<Navigate to="/login" state={{ from: location }} replace />`; if `adminOnly` and not admin → `<Navigate to="/" replace />`.
+- **`UI.js`**: `Spinner` (centered animated ring, `border-primary-600`), `ErrorAlert({ message })` (red-50 box, red-700 text, `role="alert"`), `EmptyState({ title, message, action })` (dashed border card, centered), `PageHeader({ title, subtitle })` (h1 `text-3xl font-bold`, subtitle muted), `Badge({ color })` (pill `text-xs px-2 py-0.5 rounded-full`, colors: blue/green/amber/red/slate), `Card` (surface class from 1.3), `FormField({ label, error, children })`.
+
+### 5.5 Page specifications
+Every data-fetching page follows the same pattern: `loading` → `<Spinner/>`; `error` → `<ErrorAlert/>`; empty → `<EmptyState/>`; data → content. Fetch in `useEffect`, cancel stale responses with an `ignore` flag.
+
+**Home** — (1) Hero: gradient `from-primary-600 to-primary-900`, white text, headline "Plan your study-abroad journey", subtext, search form (input + button) that navigates to `/universities?search=<q>`; two CTA buttons "Explore countries" → `/countries`, and "Create free account" → `/register` (hidden when logged in). (2) Six feature cards (emoji icon, title, text): Countries, Universities, Programs, Intakes, Language requirements, Scholarships. (3) "Popular destinations": first 6 countries from `GET /countries` as small cards (flag emoji + name) linking to `/universities?country_id=<id>`. (4) Closing CTA band.
+
+**Login** — centered card (max-w-md): email, password, submit "Log in" (disabled + "Logging in…" while pending), `ErrorAlert` for failures, link to Register. On success navigate to `location.state?.from?.pathname || '/'`.
+
+**Register** — same card layout: full name, email, password (min 6, helper text), confirm password (client-side match check), submit "Create account". On success navigate to `/profile` (so the student fills preferences next).
+
+**Profile (FR-02)** — `PageHeader "My profile"`. Form in a 2-column grid: full_name, email (read-only, gray), phone, nationality, education_level (select: High School, Diploma, Bachelor, Master), gpa (number 0–4 step 0.01, hint "4.0 scale"), ielts_score (0–9 step 0.5), preferred_country_id (select populated from `/countries`), preferred_degree_level (select: Bachelor, Master, PhD, Diploma), preferred_field (select populated from `/programs/fields`), budget_max (number, "Max tuition per year (USD)"). "Save changes" button; success shows a green `Profile saved` alert for 3 s; errors in `ErrorAlert`. Pre-fill from `profile`; convert numeric inputs to numbers or `null`.
+
+**Countries (FR-03, FR-04)** — `PageHeader "Study destinations"`, search input (client-side filter by name/region), grid of country cards: big flag emoji, name, region badge, capital, language, currency, monthly living cost, 2-line clamped description, primary button "View universities" → `/universities?country_id=<id>`.
+
+**Universities (FR-04, FR-11)** — two-column layout on `lg` (filter panel `w-72` sticky left, results right; panel stacks above on mobile).
+- Filter panel (`Card`): search text; Country select (from `/countries`); Degree level select; Field select (from `/programs/fields`); Min tuition & Max tuition number inputs; Sort select (Name A–Z, Tuition low→high, Tuition high→low, World ranking); **"Use my preferences"** button (only if authenticated; fills country, degree level, field, max tuition from `profile.preferred_*` / `budget_max`) ; "Reset" button.
+- Filters are mirrored to the URL query string (`useSearchParams`); changing a filter re-queries `GET /universities` (debounce text/number inputs 400 ms).
+- Results header: "`{count}` universities found". Result card: logo/initial avatar, name, city + country (flag), ranking badge ("#N world"), tuition range ("$X – $Y / year", formatted with `toLocaleString`), 2-line description, button "View details" → `/universities/:id`.
+
+**UniversityDetails (FR-05 – FR-09)** — fetch university by id (404 → EmptyState "University not found"). Header card: name, city/country, website link (opens in new tab), ranking, tuition range, student count, founded year, description. Below, a **tab bar** (state in `useState`, default "Overview"): 
+1. **Overview** – description, key facts grid, country visa info.
+2. **Programs** – `GET /programs/university/:id`: table (Name, Level badge, Field, Duration in years/months, Tuition/year).
+3. **Intakes** – `GET /intakes/university/:id`: cards/rows with name, season, start date, application deadline (format `D MMM YYYY`), status badge Open (green) / Closed (slate); deadlines already past show a red "Deadline passed" note.
+4. **Language** – `GET /language-requirements/university/:id`: table (Test, Overall, Each band, Level, Notes).
+5. **Scholarships** – (a) list from `GET /scholarships/university/:id` (name, coverage/amount, min GPA, min IELTS, level, deadline, link); (b) **Eligibility checker** `Card` above it: inputs GPA (0–4), IELTS (0–9), Degree level select, button "Check eligibility" → `POST /scholarships/assess` with `university_id`; inputs pre-filled from the profile when logged in. Render two groups: "You may qualify" (green-50 cards with ✓) and "Not eligible yet" (slate cards, listing each `reason` as a small red bullet). Show the note "Assessment assumes a 4.0 GPA scale".
+Each tab loads lazily on first open and caches the result in component state.
+
+**Programs (FR-06)** — `PageHeader "Programs"`; filter bar (search, degree level, field, optional university via `?university_id=`); responsive card grid or table: program name, degree badge, field, duration, tuition/year, university name (link to its details). Count text above results.
+
+**Admin (FR-10)** — admin only. `PageHeader "Admin dashboard"`. Tab bar for the six whitelisted tables. For the active table: toolbar (search input, **"+ Add"** primary button), then a table of rows showing the display columns below, with **Edit** and **Delete** buttons per row. Add/Edit opens a modal with a form generated from a `FIELD_CONFIG` constant (type `text|textarea|number|date|select|checkbox`, with foreign-key selects loaded from `countries` / `universities`). Delete requires `window.confirm`. Show success/error toasts or alerts; refetch after each mutation.
+
+Display columns per table [DECIDED]: countries → name, code, region, currency · universities → name, city, country, world_ranking, tuition_min, tuition_max · programs → name, university, degree_level, field, tuition_per_year · intakes → university, name, season, application_deadline, is_open · language_requirements → university, test_name, min_overall, degree_level · scholarships → name, university, min_gpa, min_ielts, deadline.
+
+### 5.6 Formatting helpers (put inside `services/` or `UI.js`) [DECIDED]
+`formatMoney(n)` → `"$12,345"` or `"—"`; `formatDate(d)` → `"15 Jan 2027"` or `"—"`; `formatDuration(months)` → `"2 years"`/`"18 months"`.
+
+### 5.7 Accessibility & UX baseline [DECIDED]
+Labels bound to inputs, `aria-live` on alerts, visible focus rings, buttons disabled while submitting, no layout shift between loading and loaded states (min-height on content regions), all external links `rel="noopener noreferrer"`.
+
+---
+
+## 6. STEP-BY-STEP IMPLEMENTATION SEQUENCE
+
+Build in this order. After each phase, run its **Exit checks** and fix failures before moving on.
+
+### Phase 1 — Project init, configs, environment, base schema
+1. Create the directory tree from Section 2 and `git init`.
+2. Write `netlify.toml`, `vercel.json`, `.gitignore` verbatim (2.1–2.3).
+3. `backend/package.json` (CommonJS, deps/scripts from 1.2/2.4) and `backend/.env.example`.
+4. Bootstrap the frontend with CRA conventions (`frontend/package.json`, `public/index.html` with Inter font link and `<title>StudyGlobe</title>`, `src/index.js`), install Tailwind 3 (`tailwind.config.js` with `content: ['./src/**/*.{js,jsx}', './public/index.html']` and the palette from 1.3; `postcss.config.js`; directives in `index.css`).
+5. Write `backend/database/setup.sql` complete with tables, indexes, trigger, RLS policies and the seed data from Section 3.
+**Exit checks:** `setup.sql` contains no non-idempotent statements (running it twice would not error); `npm install` succeeds in both packages; `npm run build --prefix frontend` succeeds with an empty `App.js`.
+
+### Phase 2 — Backend models, services, auth, API routes, smoke tests
+1. `config/supabase.js`, `utils/validate.js`, `utils/asyncHandler.js`, `middleware/auth.js` (4.3–4.4).
+2. `app.js` + `server.js` + `functions/api.js` (4.1–4.2) with `/health`.
+3. Routes in this order: `auth` → `profile` → `countries` → `universities` → `programs` → `intakes` → `languageRequirements` → `scholarships` (with `/assess`) → `admin`. Honour route-order notes in 4.6.
+4. Add `backend/scripts/smoke.sh` [DECIDED]: a bash script using `curl` against `http://localhost:5000/api` that checks `/health`, `/countries` (count > 0), `/universities?sort=ranking`, `/universities?degree_level=Master&max_tuition=20000`, `/programs/fields`, `POST /scholarships/assess` with `{ "gpa": 3.5, "ielts": 6.5 }`, then registers a throw-away user, logs in, calls `/auth/me`, `PUT /profile`, and verifies `GET /admin/countries` returns **403** for a non-admin.
+**Exit checks:** server starts with `npm run dev`; `GET /api/health` → `{"status":"ok"}`; smoke script passes (requires a configured Supabase project); every error path returns the `{ "error": ... }` envelope.
+
+### Phase 3 — Frontend layout, providers, routing, shared primitives
+1. `services/api.js` with interceptors (5.2).
+2. `context/AuthContext.js` (5.3).
+3. `components/UI.js`, `Navbar.js`, `ProtectedRoute.js` (5.4).
+4. `App.js` with the full route table from 5.1, using placeholder page components that render only a `PageHeader`.
+**Exit checks:** app compiles with no ESLint errors; navigation works between all routes; `/profile` redirects to `/login` when logged out; `/admin` redirects non-admins to `/`; navbar adapts to auth state.
+
+### Phase 4 — Feature-by-feature integration, forms, error/empty states
+Implement pages in this order, each with loading, error and empty states, verifying against the live backend before the next:
+1. **Register + Login** (FR-01) incl. token storage and silent refresh.
+2. **Profile** (FR-02).
+3. **Countries** (FR-03) → link to Universities.
+4. **Universities** with the full filter panel, URL sync, "Use my preferences" (FR-04, FR-11).
+5. **UniversityDetails** with all five tabs (FR-05 – FR-09), including the eligibility checker.
+6. **Programs** (FR-06).
+7. **Admin** (FR-10) with the generic CRUD modal.
+8. **Home**.
+9. Write the root **README.md**: project description, tech-stack table, file tree, local setup steps (Supabase → backend → frontend → create admin user with `update public.profiles set is_admin = true where email = 'you@example.com';`, then log out and back in), a "Common problems" table (Cannot reach the server; Login/register fails → use service_role key; Pages empty → re-run setup.sql; No Admin link), Netlify and Vercel deployment notes (set `SUPABASE_URL` and `SUPABASE_SERVICE_KEY`; leave `REACT_APP_API_URL` unset in production), the API overview table, an FR-01…FR-11 coverage table, and the notes that seed fees/deadlines/scores are illustrative placeholders, the GPA scale is 4.0, and the service_role key must never reach the frontend.
+
+### Functional requirement coverage — must all be satisfied [SOURCE]
+FR-01 Secure enrollment & authentication · FR-02 User profile management · FR-03 Country catalog · FR-04 Country-wise universities · FR-05 University details · FR-06 Academic program exploration · FR-07 Intake schedule · FR-08 Language requirement inspection · FR-09 Scholarship eligibility assessment · FR-10 Admin data management · FR-11 Preference-based filtering.
+
+### Final acceptance checklist
+- [ ] `npm run dev` (backend) and `npm start` (frontend) work locally following the README only.
+- [ ] A new user can register, is auto-logged-in, edits their profile, filters universities with "Use my preferences", opens a university, views all five tabs, and runs the eligibility checker.
+- [ ] After the SQL admin promotion and re-login, the Admin link appears and CRUD works on all six tables; non-admins get 403 from `/api/admin/*`.
+- [ ] `netlify.toml` build succeeds with `CI=false`; `/api/health` works through the redirect on Netlify; deep links (e.g. `/universities/3`) load via the SPA fallback redirect.
+- [ ] No secret is committed; `.env` files are git-ignored; the frontend never imports the Supabase SDK.
+- [ ] Re-running `setup.sql` is harmless.
+
+**Do not** add features beyond this document (no payments, chat, file uploads, social login, dark mode, or i18n). When a detail seems missing, apply the closest rule from the relevant section above rather than inventing new behaviour.
