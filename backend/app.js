@@ -3,6 +3,12 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
+const countriesRoutes = require('./routes/countries');
+const universitiesRoutes = require('./routes/universities');
+const programsRoutes = require('./routes/programs');
+const intakesRoutes = require('./routes/intakes');
+const languageRequirementsRoutes = require('./routes/languageRequirements');
+const scholarshipsRoutes = require('./routes/scholarships');
 
 const app = express();
 
@@ -34,17 +40,23 @@ api.get('/health', (req, res) => {
 
 api.use('/auth', authRoutes);
 api.use('/profile', profileRoutes);
+api.use('/countries', countriesRoutes);
+api.use('/universities', universitiesRoutes);
+api.use('/programs', programsRoutes);
+api.use('/intakes', intakesRoutes);
+api.use('/language-requirements', languageRequirementsRoutes);
+api.use('/scholarships', scholarshipsRoutes);
 
-// Mount at both /api and / so local dev, Netlify redirects, and Vercel rewrites all work
+
 app.use('/api', api);
 app.use('/', api);
 
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Global error handler
+
 app.use((err, req, res, next) => {
   if (err?.type === 'entity.parse.failed') {
     return res.status(400).json({ error: 'Invalid JSON body' });
@@ -64,4 +76,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-
