@@ -9,6 +9,7 @@ const programsRoutes = require('./routes/programs');
 const intakesRoutes = require('./routes/intakes');
 const languageRequirementsRoutes = require('./routes/languageRequirements');
 const scholarshipsRoutes = require('./routes/scholarships');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -46,7 +47,7 @@ api.use('/programs', programsRoutes);
 api.use('/intakes', intakesRoutes);
 api.use('/language-requirements', languageRequirementsRoutes);
 api.use('/scholarships', scholarshipsRoutes);
-
+api.use('/admin', adminRoutes);
 
 app.use('/api', api);
 app.use('/', api);
