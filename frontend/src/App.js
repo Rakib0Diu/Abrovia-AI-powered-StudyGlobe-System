@@ -13,6 +13,7 @@ import Countries from './pages/Countries';
 import Universities from './pages/Universities';
 import UniversityDetails from './pages/UniversityDetails';
 import Programs from './pages/Programs';
+import Scholarships from './pages/Scholarships';
 import Admin from './pages/Admin';
 
 function NotFound() {
@@ -57,6 +58,7 @@ export default function App() {
               <Route path="/universities" element={<Universities />} />
               <Route path="/universities/:id" element={<UniversityDetails />} />
               <Route path="/programs" element={<Programs />} />
+              <Route path="/scholarships" element={<Scholarships />} />
               <Route
                 path="/admin"
                 element={

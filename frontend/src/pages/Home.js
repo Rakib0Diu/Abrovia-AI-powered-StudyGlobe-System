@@ -9,31 +9,37 @@ const FEATURES = [
     icon: '🌍',
     title: 'Countries',
     text: 'Compare study destinations, monthly living costs, official languages, and student visa guidelines.',
+    path: '/countries',
   },
   {
     icon: '🏛️',
     title: 'Universities',
     text: 'Filter top-ranked institutions by country, tuition range, degree level, and academic discipline.',
+    path: '/universities',
   },
   {
     icon: '🎓',
     title: 'Programs',
     text: 'Explore Bachelor, Master, PhD, and Diploma programs across STEM, business, health, and arts.',
+    path: '/programs',
   },
   {
     icon: '📅',
     title: 'Intakes',
     text: 'Track upcoming semester start dates, application deadlines, and open admission windows.',
+    path: '/universities',
   },
   {
     icon: '🗣️',
     title: 'Language requirements',
     text: 'Inspect minimum IELTS, TOEFL iBT, PTE Academic, and Duolingo scores required for entry.',
+    path: '/universities',
   },
   {
     icon: '💡',
     title: 'Scholarships',
     text: 'Run instant eligibility assessments based on your GPA and IELTS score to find funding.',
+    path: '/scholarships',
   },
 ];
 
@@ -157,13 +163,26 @@ export default function Home() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feat) => (
-            <Card key={feat.title} className="p-6">
-              <div className="text-3xl mb-3" aria-hidden="true">
-                {feat.icon}
-              </div>
-              <h3 className="text-lg font-semibold text-slate-800">{feat.title}</h3>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{feat.text}</p>
-            </Card>
+            <Link
+              key={feat.title}
+              to={feat.path}
+              className="group block h-full focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-xl"
+            >
+              <Card className="p-6 h-full hover:border-primary-300 transition flex flex-col justify-between">
+                <div>
+                  <div className="text-3xl mb-3" aria-hidden="true">
+                    {feat.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-800 group-hover:text-primary-600 transition">
+                    {feat.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{feat.text}</p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center text-xs font-semibold text-primary-600 group-hover:text-primary-700">
+                  Explore {feat.title.toLowerCase()} →
+                </div>
+              </Card>
+            </Link>
           ))}
         </div>
       </section>
