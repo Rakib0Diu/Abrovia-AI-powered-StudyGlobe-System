@@ -119,7 +119,7 @@ export default function Home() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search universities by name or city (e.g. Oxford, Toronto, Munich)…"
-              className="flex-1 rounded-lg border-0 px-4 py-3 text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
+              className="flex-1 rounded-lg border-0 px-4 py-3 bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
             />
             <button
               type="submit"
@@ -152,10 +152,10 @@ export default function Home() {
       {/* 2. Six Feature Cards */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100">
             Everything you need to prepare for studying abroad
           </h2>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-slate-500 dark:text-slate-400">
             Structured catalog tools to help you research, shortlist, and qualify for global
             universities.
           </p>
@@ -168,17 +168,19 @@ export default function Home() {
               to={feat.path}
               className="group block h-full focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-xl"
             >
-              <Card className="p-6 h-full hover:border-primary-300 transition flex flex-col justify-between">
+              <Card className="p-6 h-full hover:border-primary-300 dark:hover:border-primary-500 transition flex flex-col justify-between">
                 <div>
                   <div className="text-3xl mb-3" aria-hidden="true">
                     {feat.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-800 group-hover:text-primary-600 transition">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition">
                     {feat.title}
                   </h3>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{feat.text}</p>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {feat.text}
+                  </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center text-xs font-semibold text-primary-600 group-hover:text-primary-700">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center text-xs font-semibold text-primary-600 dark:text-primary-400 group-hover:text-primary-700 dark:group-hover:text-primary-300">
                   Explore {feat.title.toLowerCase()} →
                 </div>
               </Card>
@@ -188,20 +190,20 @@ export default function Home() {
       </section>
 
       {/* 3. Popular Destinations */}
-      <section className="bg-white border-y border-slate-200 py-16">
+      <section className="bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 py-16 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-8 gap-4">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100">
                 Popular destinations
               </h2>
-              <p className="mt-1 text-slate-500">
+              <p className="mt-1 text-slate-500 dark:text-slate-400">
                 Browse universities in top study-abroad countries
               </p>
             </div>
             <Link
               to="/countries"
-              className="text-sm font-semibold text-primary-600 hover:text-primary-700"
+              className="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
             >
               View all countries →
             </Link>
@@ -223,17 +225,17 @@ export default function Home() {
                   <Link
                     key={country.id}
                     to={`/universities?country_id=${country.id}`}
-                    className="group block bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-primary-300 transition"
+                    className="group block bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:border-primary-300 dark:hover:border-primary-500 transition"
                   >
                     <div className="flex items-center gap-4">
                       <span className="text-4xl" aria-hidden="true">
                         {country.flag_emoji || '🌍'}
                       </span>
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-800 group-hover:text-primary-600 transition">
+                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition">
                           {country.name}
                         </h3>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           {country.region || 'Global destination'}
                           {country.capital ? ` · ${country.capital}` : ''}
                         </p>

@@ -63,7 +63,7 @@ export default function Countries() {
 
       {/* Client-side search bar */}
       <div className="mb-8 max-w-md">
-        <label htmlFor="country-search" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="country-search" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
           Search destinations
         </label>
         <input
@@ -72,7 +72,7 @@ export default function Countries() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Filter by country name or region (e.g. Europe, Asia)…"
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          className="w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 px-3 py-2 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
         />
       </div>
 
@@ -94,7 +94,7 @@ export default function Countries() {
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition"
+                  className="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg px-4 py-2 text-sm font-medium transition"
                 >
                   Clear search
                 </button>
@@ -112,9 +112,9 @@ export default function Countries() {
                         {country.flag_emoji || '🌍'}
                       </span>
                       <div>
-                        <h2 className="text-xl font-bold text-slate-800">{country.name}</h2>
+                        <h2 className="text-xl font-bold text-slate-800 dark:text-white">{country.name}</h2>
                         {country.code && (
-                          <span className="text-xs font-medium text-slate-400">
+                          <span className="text-xs font-medium text-slate-400 dark:text-slate-500">
                             ISO: {country.code}
                           </span>
                         )}
@@ -124,29 +124,29 @@ export default function Countries() {
                   </div>
 
                   {country.description && (
-                    <p className="mt-4 text-sm text-slate-600 line-clamp-2">
+                    <p className="mt-4 text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
                       {country.description}
                     </p>
                   )}
 
-                  <dl className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                  <dl className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
                     <div>
-                      <dt className="text-slate-500">Capital</dt>
-                      <dd className="font-medium text-slate-800">{country.capital || '—'}</dd>
+                      <dt className="text-slate-500 dark:text-slate-400">Capital</dt>
+                      <dd className="font-medium text-slate-800 dark:text-slate-200">{country.capital || '—'}</dd>
                     </div>
                     <div>
-                      <dt className="text-slate-500">Language</dt>
-                      <dd className="font-medium text-slate-800">
+                      <dt className="text-slate-500 dark:text-slate-400">Language</dt>
+                      <dd className="font-medium text-slate-800 dark:text-slate-200">
                         {country.official_language || '—'}
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-slate-500">Currency</dt>
-                      <dd className="font-medium text-slate-800">{country.currency || '—'}</dd>
+                      <dt className="text-slate-500 dark:text-slate-400">Currency</dt>
+                      <dd className="font-medium text-slate-800 dark:text-slate-200">{country.currency || '—'}</dd>
                     </div>
                     <div>
-                      <dt className="text-slate-500">Living cost / mo</dt>
-                      <dd className="font-semibold text-primary-700">
+                      <dt className="text-slate-500 dark:text-slate-400">Living cost / mo</dt>
+                      <dd className="font-semibold text-primary-700 dark:text-primary-400">
                         {formatMoney(country.living_cost_monthly)}
                       </dd>
                     </div>

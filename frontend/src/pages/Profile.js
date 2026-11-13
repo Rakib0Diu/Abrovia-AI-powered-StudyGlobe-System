@@ -4,7 +4,7 @@ import { countriesApi, programsApi } from '../services/api';
 import { Card, ErrorAlert, FormField, PageHeader, Spinner } from '../components/UI';
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white';
+  'w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500';
 
 const EDUCATION_LEVELS = ['High School', 'Diploma', 'Bachelor', 'Master'];
 const DEGREE_LEVELS = ['Bachelor', 'Master', 'PhD', 'Diploma'];
@@ -185,7 +185,7 @@ export default function Profile() {
           <div
             role="status"
             aria-live="polite"
-            className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"
+            className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300"
           >
             ✓ Profile saved
           </div>
@@ -212,7 +212,7 @@ export default function Profile() {
                 readOnly
                 disabled
                 value={profile?.email || user?.email || ''}
-                className="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-slate-500 cursor-not-allowed"
+                className="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-slate-500 cursor-not-allowed dark:bg-slate-800/60 dark:border-slate-700 dark:text-slate-400"
               />
             </FormField>
 
@@ -378,7 +378,7 @@ export default function Profile() {
             </FormField>
           </div>
 
-          <div className="pt-2 flex items-center justify-end border-t border-slate-200">
+          <div className="pt-2 flex items-center justify-end border-t border-slate-200 dark:border-slate-700">
             <button
               type="submit"
               disabled={saving}

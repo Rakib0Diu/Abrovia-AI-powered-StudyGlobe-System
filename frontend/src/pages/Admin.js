@@ -17,7 +17,7 @@ import {
 } from '../components/UI';
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
+  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500';
 
 const TABLES = [
   { key: 'countries', label: 'Countries' },
@@ -443,38 +443,38 @@ export default function Admin() {
       case 'countries':
         return (
           <>
-            <td className="px-6 py-4 font-semibold text-slate-800">
+            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-white">
               {row.flag_emoji ? `${row.flag_emoji} ` : ''}
               {row.name}
             </td>
-            <td className="px-6 py-4 text-slate-600">{row.code || '—'}</td>
-            <td className="px-6 py-4 text-slate-600">{row.region || '—'}</td>
-            <td className="px-6 py-4 text-slate-600">{row.currency || '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.code || '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.region || '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.currency || '—'}</td>
           </>
         );
       case 'universities':
         return (
           <>
-            <td className="px-6 py-4 font-semibold text-slate-800">{row.name}</td>
-            <td className="px-6 py-4 text-slate-600">{row.city || '—'}</td>
-            <td className="px-6 py-4 text-slate-600">{countryName}</td>
-            <td className="px-6 py-4 text-slate-600">
+            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-white">{row.name}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.city || '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{countryName}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
               {row.world_ranking ? `#${row.world_ranking}` : '—'}
             </td>
-            <td className="px-6 py-4 text-slate-600">{formatMoney(row.tuition_min)}</td>
-            <td className="px-6 py-4 text-slate-600">{formatMoney(row.tuition_max)}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatMoney(row.tuition_min)}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatMoney(row.tuition_max)}</td>
           </>
         );
       case 'programs':
         return (
           <>
-            <td className="px-6 py-4 font-semibold text-slate-800">{row.name}</td>
-            <td className="px-6 py-4 text-slate-600">{uniName}</td>
+            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-white">{row.name}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{uniName}</td>
             <td className="px-6 py-4">
               <Badge color="blue">{row.degree_level || '—'}</Badge>
             </td>
-            <td className="px-6 py-4 text-slate-600">{row.field || '—'}</td>
-            <td className="px-6 py-4 font-medium text-primary-700">
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.field || '—'}</td>
+            <td className="px-6 py-4 font-medium text-primary-700 dark:text-primary-400">
               {formatMoney(row.tuition_per_year)}
             </td>
           </>
@@ -482,10 +482,10 @@ export default function Admin() {
       case 'intakes':
         return (
           <>
-            <td className="px-6 py-4 text-slate-600">{uniName}</td>
-            <td className="px-6 py-4 font-semibold text-slate-800">{row.name}</td>
-            <td className="px-6 py-4 text-slate-600">{row.season || '—'}</td>
-            <td className="px-6 py-4 text-slate-600">
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{uniName}</td>
+            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-white">{row.name}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.season || '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
               {formatDate(row.application_deadline)}
             </td>
             <td className="px-6 py-4">
@@ -498,12 +498,12 @@ export default function Admin() {
       case 'language_requirements':
         return (
           <>
-            <td className="px-6 py-4 text-slate-600">{uniName}</td>
-            <td className="px-6 py-4 font-semibold text-slate-800">{row.test_name}</td>
-            <td className="px-6 py-4 font-medium text-primary-700">
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{uniName}</td>
+            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-white">{row.test_name}</td>
+            <td className="px-6 py-4 font-medium text-primary-700 dark:text-primary-400">
               {row.min_overall ?? '—'}
             </td>
-            <td className="px-6 py-4 text-slate-600">
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
               {row.degree_level || 'All levels'}
             </td>
           </>
@@ -511,17 +511,17 @@ export default function Admin() {
       case 'scholarships':
         return (
           <>
-            <td className="px-6 py-4 font-semibold text-slate-800">{row.name}</td>
-            <td className="px-6 py-4 text-slate-600">
+            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-white">{row.name}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">
               {row.university_id ? uniName : 'Country-wide'}
             </td>
-            <td className="px-6 py-4 text-slate-600">{row.min_gpa ?? '—'}</td>
-            <td className="px-6 py-4 text-slate-600">{row.min_ielts ?? '—'}</td>
-            <td className="px-6 py-4 text-slate-600">{formatDate(row.deadline)}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.min_gpa ?? '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{row.min_ielts ?? '—'}</td>
+            <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{formatDate(row.deadline)}</td>
           </>
         );
       default:
-        return <td className="px-6 py-4">{row.name}</td>;
+        return <td className="px-6 py-4 text-slate-800 dark:text-white">{row.name}</td>;
     }
   };
 
@@ -539,7 +539,7 @@ export default function Admin() {
         <div
           role="status"
           aria-live="polite"
-          className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700"
+          className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300"
         >
           ✓ {successMessage}
         </div>
@@ -548,7 +548,7 @@ export default function Admin() {
       <ErrorAlert message={error} className="mb-6" />
 
       {/* Table Tab Bar */}
-      <div className="border-b border-slate-200 mb-6 overflow-x-auto">
+      <div className="border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto">
         <nav className="-mb-px flex space-x-6" aria-label="Catalog tables">
           {TABLES.map((t) => {
             const isActive = activeTable === t.key;
@@ -559,8 +559,8 @@ export default function Admin() {
                 onClick={() => setActiveTable(t.key)}
                 className={`whitespace-nowrap pb-3 px-1 border-b-2 text-sm font-medium transition focus:outline-none ${
                   isActive
-                    ? 'border-primary-600 text-primary-600 font-semibold'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                    ? 'border-primary-600 text-primary-600 font-semibold dark:border-primary-400 dark:text-primary-400'
+                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-600'
                 }`}
               >
                 {t.label}
@@ -611,38 +611,38 @@ export default function Admin() {
         ) : (
           <Card className="overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200 text-sm">
-                <thead className="bg-slate-50">
+              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                <thead className="bg-slate-50 dark:bg-slate-900/60">
                   <tr>
                     {renderTableHeaders().map((header) => (
                       <th
                         key={header}
-                        className="px-6 py-3 text-left font-semibold text-slate-700 whitespace-nowrap"
+                        className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap"
                       >
                         {header}
                       </th>
                     ))}
-                    <th className="px-6 py-3 text-right font-semibold text-slate-700 whitespace-nowrap">
+                    <th className="px-6 py-3 text-right font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 bg-white">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800">
                   {filteredRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-slate-50">
+                    <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                       {renderRowCells(row)}
                       <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
                         <button
                           type="button"
                           onClick={() => openEditModal(row)}
-                          className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg px-3 py-1 text-xs font-medium transition"
+                          className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600 rounded-lg px-3 py-1 text-xs font-medium transition"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(row)}
-                          className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 rounded-lg px-3 py-1 text-xs font-medium transition"
+                          className="bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 dark:bg-red-950/40 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950/70 rounded-lg px-3 py-1 text-xs font-medium transition"
                         >
                           Delete
                         </button>
@@ -659,21 +659,21 @@ export default function Admin() {
       {/* Add / Edit Modal */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 overflow-y-auto"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="admin-modal-title"
         >
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-              <h2 id="admin-modal-title" className="text-lg font-bold text-slate-800">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+              <h2 id="admin-modal-title" className="text-lg font-bold text-slate-800 dark:text-white">
                 {editingRow ? `Edit ${activeTableLabel}` : `Add to ${activeTableLabel}`}
               </h2>
               <button
                 type="button"
                 onClick={closeModal}
                 aria-label="Close modal"
-                className="text-slate-400 hover:text-slate-600 rounded-lg p-1"
+                className="text-slate-400 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 rounded-lg p-1"
               >
                 ✕
               </button>
@@ -708,7 +708,7 @@ export default function Admin() {
                         />
                         <label
                           htmlFor={inputId}
-                          className="text-sm font-medium text-slate-700"
+                          className="text-sm font-medium text-slate-700 dark:text-slate-200"
                         >
                           {field.label}
                         </label>
@@ -785,12 +785,12 @@ export default function Admin() {
                 })}
               </div>
 
-              <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
                   disabled={saving}
-                  className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition"
+                  className="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600 rounded-lg px-4 py-2 text-sm font-medium transition"
                 >
                   Cancel
                 </button>

@@ -18,7 +18,7 @@ import {
 } from '../components/UI';
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
+  'w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-800 dark:text-white dark:border-slate-700 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
 
 const DEGREE_LEVELS = ['Bachelor', 'Master', 'PhD', 'Diploma'];
 
@@ -251,12 +251,12 @@ export default function Universities() {
         {/* Filter Panel (w-72 sticky left on lg, stacks above on mobile) */}
         <aside className="w-full lg:w-72 shrink-0 lg:sticky lg:top-24">
           <Card className="p-5 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <h2 className="text-base font-semibold text-slate-800">Filters</h2>
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+              <h2 className="text-base font-semibold text-slate-800 dark:text-white">Filters</h2>
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-xs font-medium text-primary-600 hover:text-primary-700"
+                className="text-xs font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
               >
                 Reset
               </button>
@@ -266,7 +266,7 @@ export default function Universities() {
               <button
                 type="button"
                 onClick={handleUsePreferences}
-                className="w-full bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 rounded-lg px-3 py-2 text-xs font-semibold transition"
+                className="w-full bg-primary-50 dark:bg-primary-950/40 hover:bg-primary-100 dark:hover:bg-primary-900/40 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 rounded-lg px-3 py-2 text-xs font-semibold transition"
               >
                 ✨ Use my preferences
               </button>
@@ -378,7 +378,7 @@ export default function Universities() {
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg px-3 py-2 text-sm font-medium transition"
+                className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg px-3 py-2 text-sm font-medium transition"
               >
                 Reset
               </button>
@@ -389,7 +389,7 @@ export default function Universities() {
         {/* Results Panel */}
         <div className="flex-1 w-full min-h-[420px]">
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm font-medium text-slate-600" aria-live="polite">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400" aria-live="polite">
               {loading
                 ? 'Loading universities…'
                 : `${count} ${count === 1 ? 'university' : 'universities'} found`}
@@ -427,21 +427,21 @@ export default function Universities() {
                             <img
                               src={uni.logo_url}
                               alt={`${uni.name} logo`}
-                              className="h-12 w-12 rounded-lg object-contain border border-slate-200 bg-white shrink-0"
+                              className="h-12 w-12 rounded-lg object-contain border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0"
                             />
                           ) : (
                             <div
                               aria-hidden="true"
-                              className="h-12 w-12 rounded-lg bg-primary-100 text-primary-700 font-bold text-lg flex items-center justify-center shrink-0"
+                              className="h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300 font-bold text-lg flex items-center justify-center shrink-0"
                             >
                               {initial}
                             </div>
                           )}
                           <div>
-                            <h3 className="text-lg font-bold text-slate-800 leading-snug">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-snug">
                               {uni.name}
                             </h3>
-                            <p className="mt-0.5 text-xs text-slate-500">
+                            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                               {uni.country?.flag_emoji ? `${uni.country.flag_emoji} ` : ''}
                               {uni.city ? `${uni.city}, ` : ''}
                               {uni.country?.name || ''}
@@ -456,18 +456,18 @@ export default function Universities() {
                         )}
                       </div>
 
-                      <div className="mt-4 text-sm font-semibold text-primary-700">
+                      <div className="mt-4 text-sm font-semibold text-primary-700 dark:text-primary-400">
                         {formatTuitionRange(uni.tuition_min, uni.tuition_max)}
                       </div>
 
                       {uni.description && (
-                        <p className="mt-2 text-sm text-slate-600 line-clamp-2">
+                        <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
                           {uni.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-slate-100">
+                    <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
                       <Link
                         to={`/universities/${uni.id}`}
                         className="block w-full text-center bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-2 text-sm font-medium transition"

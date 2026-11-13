@@ -17,7 +17,7 @@ import {
 } from '../components/UI';
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
+  'w-full rounded-lg border border-slate-300 bg-white dark:bg-slate-800 dark:border-slate-700 px-3 py-2 text-sm text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
 
 const DEGREE_LEVELS = ['Bachelor', 'Master', 'PhD', 'Diploma'];
 
@@ -218,7 +218,7 @@ export default function Programs() {
             <button
               type="button"
               onClick={handleReset}
-              className="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition"
+              className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg px-4 py-2 text-sm font-medium transition"
             >
               Reset filters
             </button>
@@ -229,7 +229,7 @@ export default function Programs() {
       {/* Results Region */}
       <div className="min-h-[360px]">
         <div className="mb-4">
-          <p className="text-sm font-medium text-slate-600" aria-live="polite">
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400" aria-live="polite">
             {loading
               ? 'Loading programs…'
               : `${count} ${count === 1 ? 'program' : 'programs'} found`}
@@ -264,11 +264,11 @@ export default function Programs() {
                       {prog.degree_level || 'Program'}
                     </Badge>
                     {prog.field && (
-                      <span className="text-xs font-medium text-slate-500">{prog.field}</span>
+                      <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{prog.field}</span>
                     )}
                   </div>
 
-                  <h2 className="mt-3 text-lg font-bold text-slate-800 leading-snug">
+                  <h2 className="mt-3 text-lg font-bold text-slate-800 dark:text-white leading-snug">
                     {prog.name}
                   </h2>
 
@@ -276,12 +276,12 @@ export default function Programs() {
                     <p className="mt-1 text-sm">
                       <Link
                         to={`/universities/${prog.university.id || prog.university_id}`}
-                        className="font-medium text-primary-600 hover:text-primary-700"
+                        className="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
                       >
                         {prog.university.name}
                       </Link>
                       {prog.university.city ? (
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
                           {' '}
                           · {prog.university.city}
                         </span>
@@ -290,22 +290,22 @@ export default function Programs() {
                   )}
 
                   {prog.description && (
-                    <p className="mt-3 text-sm text-slate-600 line-clamp-2">
+                    <p className="mt-3 text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
                       {prog.description}
                     </p>
                   )}
                 </div>
 
-                <dl className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                <dl className="mt-5 pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                   <div>
-                    <dt className="text-slate-500">Duration</dt>
-                    <dd className="font-semibold text-slate-800 mt-0.5">
+                    <dt className="text-slate-500 dark:text-slate-400">Duration</dt>
+                    <dd className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
                       {formatDuration(prog.duration_months)}
                     </dd>
                   </div>
                   <div className="text-right">
-                    <dt className="text-slate-500">Tuition / year</dt>
-                    <dd className="font-semibold text-primary-700 mt-0.5">
+                    <dt className="text-slate-500 dark:text-slate-400">Tuition / year</dt>
+                    <dd className="font-semibold text-primary-700 dark:text-primary-400 mt-0.5">
                       {formatMoney(prog.tuition_per_year)}
                     </dd>
                   </div>

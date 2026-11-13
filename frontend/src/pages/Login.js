@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Card, ErrorAlert, FormField } from '../components/UI';
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
+  'w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500';
 
 export default function Login() {
   const { login, isAuthenticated, loading } = useAuth();
@@ -49,8 +49,8 @@ export default function Login() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex items-center justify-center min-h-[75vh]">
       <Card className="w-full max-w-md p-6 sm:p-8">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">Welcome back</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Welcome back</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Log in to manage your study-abroad profile and preferences
           </p>
         </div>
@@ -93,11 +93,11 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-600">
+        <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
           Don&apos;t have an account?{' '}
           <Link
             to="/register"
-            className="font-semibold text-primary-600 hover:text-primary-700"
+            className="font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
           >
             Create an account
           </Link>

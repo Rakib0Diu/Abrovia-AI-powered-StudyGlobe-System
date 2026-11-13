@@ -24,7 +24,7 @@ const TABS = ['Overview', 'Programs', 'Intakes', 'Language', 'Scholarships'];
 const DEGREE_LEVELS = ['Bachelor', 'Master', 'PhD', 'Diploma'];
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
+  'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-slate-800 dark:border-slate-700 dark:text-white dark:placeholder-slate-500';
 
 function getDegreeBadgeColor(level) {
   switch (level) {
@@ -299,7 +299,7 @@ export default function UniversityDetails() {
       <div className="mb-4">
         <Link
           to="/universities"
-          className="text-sm font-medium text-primary-600 hover:text-primary-700"
+          className="text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
         >
           ← Back to universities
         </Link>
@@ -313,12 +313,12 @@ export default function UniversityDetails() {
               <img
                 src={university.logo_url}
                 alt={`${university.name} logo`}
-                className="h-16 w-16 rounded-xl object-contain border border-slate-200 bg-white shrink-0"
+                className="h-16 w-16 rounded-xl object-contain border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 shrink-0"
               />
             ) : (
               <div
                 aria-hidden="true"
-                className="h-16 w-16 rounded-xl bg-primary-100 text-primary-700 font-bold text-2xl flex items-center justify-center shrink-0"
+                className="h-16 w-16 rounded-xl bg-primary-100 text-primary-700 dark:bg-primary-950 dark:text-primary-300 font-bold text-2xl flex items-center justify-center shrink-0"
               >
                 {initial}
               </div>
@@ -326,7 +326,7 @@ export default function UniversityDetails() {
 
             <div>
               <div className="flex flex-wrap items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
                   {university.name}
                 </h1>
                 {university.world_ranking && (
@@ -334,14 +334,14 @@ export default function UniversityDetails() {
                 )}
               </div>
 
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 {university.country?.flag_emoji ? `${university.country.flag_emoji} ` : ''}
                 {university.city ? `${university.city}, ` : ''}
                 {university.country?.name || ''}
               </p>
 
               {university.description && (
-                <p className="mt-4 text-slate-600 text-sm sm:text-base max-w-3xl leading-relaxed">
+                <p className="mt-4 text-slate-600 dark:text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">
                   {university.description}
                 </p>
               )}
@@ -363,28 +363,28 @@ export default function UniversityDetails() {
         </div>
 
         {/* Summary Metrics Bar */}
-        <dl className="mt-6 pt-6 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+        <dl className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
           <div>
-            <dt className="text-slate-500">Tuition range</dt>
-            <dd className="mt-0.5 font-semibold text-primary-700">{tuitionText}</dd>
+            <dt className="text-slate-500 dark:text-slate-400">Tuition range</dt>
+            <dd className="mt-0.5 font-semibold text-primary-700 dark:text-primary-400">{tuitionText}</dd>
           </div>
           <div>
-            <dt className="text-slate-500">World ranking</dt>
-            <dd className="mt-0.5 font-semibold text-slate-800">
+            <dt className="text-slate-500 dark:text-slate-400">World ranking</dt>
+            <dd className="mt-0.5 font-semibold text-slate-800 dark:text-white">
               {university.world_ranking ? `#${university.world_ranking}` : '—'}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Students</dt>
-            <dd className="mt-0.5 font-semibold text-slate-800">
+            <dt className="text-slate-500 dark:text-slate-400">Students</dt>
+            <dd className="mt-0.5 font-semibold text-slate-800 dark:text-white">
               {university.student_count
                 ? Number(university.student_count).toLocaleString('en-US')
                 : '—'}
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Founded</dt>
-            <dd className="mt-0.5 font-semibold text-slate-800">
+            <dt className="text-slate-500 dark:text-slate-400">Founded</dt>
+            <dd className="mt-0.5 font-semibold text-slate-800 dark:text-white">
               {university.founded_year || '—'}
             </dd>
           </div>
@@ -392,7 +392,7 @@ export default function UniversityDetails() {
       </Card>
 
       {/* Tab Bar */}
-      <div className="border-b border-slate-200 mb-6 overflow-x-auto">
+      <div className="border-b border-slate-200 dark:border-slate-700 mb-6 overflow-x-auto">
         <nav className="-mb-px flex space-x-6" aria-label="University sections">
           {TABS.map((tab) => {
             const isActive = activeTab === tab;
@@ -403,8 +403,8 @@ export default function UniversityDetails() {
                 onClick={() => setActiveTab(tab)}
                 className={`whitespace-nowrap pb-3 px-1 border-b-2 text-sm font-medium transition focus:outline-none ${
                   isActive
-                    ? 'border-primary-600 text-primary-600 font-semibold'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                    ? 'border-primary-600 text-primary-600 font-semibold dark:border-primary-400 dark:text-primary-400'
+                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-600'
                 }`}
               >
                 {tab}
@@ -420,17 +420,17 @@ export default function UniversityDetails() {
         {activeTab === 'Overview' && (
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="p-6 lg:col-span-2 space-y-4">
-              <h2 className="text-lg font-bold text-slate-800">About {university.name}</h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">About {university.name}</h2>
+              <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
                 {university.description || 'No overview description available.'}
               </p>
 
               {university.country?.visa_info && (
-                <div className="pt-4 border-t border-slate-200">
-                  <h3 className="text-base font-semibold text-slate-800">
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white">
                     Student Visa Information ({university.country.name})
                   </h3>
-                  <p className="mt-1 text-sm text-slate-600 leading-relaxed">
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     {university.country.visa_info}
                   </p>
                 </div>
@@ -438,42 +438,42 @@ export default function UniversityDetails() {
             </Card>
 
             <Card className="p-6 space-y-4">
-              <h2 className="text-lg font-bold text-slate-800">Key Facts</h2>
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">Key Facts</h2>
               <dl className="space-y-3 text-sm">
-                <div className="flex justify-between py-1.5 border-b border-slate-100">
-                  <dt className="text-slate-500">Country</dt>
-                  <dd className="font-medium text-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-700/60">
+                  <dt className="text-slate-500 dark:text-slate-400">Country</dt>
+                  <dd className="font-medium text-slate-800 dark:text-slate-200">
                     {university.country?.flag_emoji ? `${university.country.flag_emoji} ` : ''}
                     {university.country?.name || '—'}
                   </dd>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100">
-                  <dt className="text-slate-500">City</dt>
-                  <dd className="font-medium text-slate-800">{university.city || '—'}</dd>
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-700/60">
+                  <dt className="text-slate-500 dark:text-slate-400">City</dt>
+                  <dd className="font-medium text-slate-800 dark:text-slate-200">{university.city || '—'}</dd>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100">
-                  <dt className="text-slate-500">Official language</dt>
-                  <dd className="font-medium text-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-700/60">
+                  <dt className="text-slate-500 dark:text-slate-400">Official language</dt>
+                  <dd className="font-medium text-slate-800 dark:text-slate-200">
                     {university.country?.official_language || '—'}
                   </dd>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100">
-                  <dt className="text-slate-500">Currency</dt>
-                  <dd className="font-medium text-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-700/60">
+                  <dt className="text-slate-500 dark:text-slate-400">Currency</dt>
+                  <dd className="font-medium text-slate-800 dark:text-slate-200">
                     {university.country?.currency || '—'}
                   </dd>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-slate-100">
-                  <dt className="text-slate-500">Est. living cost</dt>
-                  <dd className="font-medium text-slate-800">
+                <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-700/60">
+                  <dt className="text-slate-500 dark:text-slate-400">Est. living cost</dt>
+                  <dd className="font-medium text-slate-800 dark:text-slate-200">
                     {university.country?.living_cost_monthly
                       ? `${formatMoney(university.country.living_cost_monthly)} / month`
                       : '—'}
                   </dd>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <dt className="text-slate-500">Founded year</dt>
-                  <dd className="font-medium text-slate-800">
+                  <dt className="text-slate-500 dark:text-slate-400">Founded year</dt>
+                  <dd className="font-medium text-slate-800 dark:text-slate-200">
                     {university.founded_year || '—'}
                   </dd>
                 </div>
@@ -497,33 +497,33 @@ export default function UniversityDetails() {
             ) : (
               <Card className="overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-200 text-sm">
-                    <thead className="bg-slate-50">
+                  <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                    <thead className="bg-slate-50 dark:bg-slate-900/60">
                       <tr>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Name
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Level
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Field
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Duration
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Tuition / year
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white">
+                    <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-700 dark:bg-slate-800">
                       {tabData.Programs.map((prog) => (
-                        <tr key={prog.id} className="hover:bg-slate-50">
+                        <tr key={prog.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                           <td className="px-6 py-4">
-                            <div className="font-semibold text-slate-800">{prog.name}</div>
+                            <div className="font-semibold text-slate-800 dark:text-white">{prog.name}</div>
                             {prog.description && (
-                              <div className="text-xs text-slate-500 mt-0.5">
+                              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                 {prog.description}
                               </div>
                             )}
@@ -533,13 +533,13 @@ export default function UniversityDetails() {
                               {prog.degree_level || '—'}
                             </Badge>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                             {prog.field || '—'}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                             {formatDuration(prog.duration_months)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-primary-700">
+                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-primary-700 dark:text-primary-400">
                             {formatMoney(prog.tuition_per_year)}
                           </td>
                         </tr>
@@ -572,8 +572,8 @@ export default function UniversityDetails() {
                     <Card key={intake.id} className="p-6">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="text-lg font-bold text-slate-800">{intake.name}</h3>
-                          <p className="text-xs text-slate-500 mt-0.5">
+                          <h3 className="text-lg font-bold text-slate-800 dark:text-white">{intake.name}</h3>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                             Season: {intake.season || '—'}
                           </p>
                         </div>
@@ -582,20 +582,20 @@ export default function UniversityDetails() {
                         </Badge>
                       </div>
 
-                      <dl className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4 text-sm">
+                      <dl className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <dt className="text-slate-500 text-xs">Start date</dt>
-                          <dd className="font-medium text-slate-800 mt-0.5">
+                          <dt className="text-slate-500 dark:text-slate-400 text-xs">Start date</dt>
+                          <dd className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">
                             {formatDate(intake.start_date)}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-500 text-xs">Application deadline</dt>
-                          <dd className="font-medium text-slate-800 mt-0.5">
+                          <dt className="text-slate-500 dark:text-slate-400 text-xs">Application deadline</dt>
+                          <dd className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">
                             {formatDate(intake.application_deadline)}
                           </dd>
                           {passed && (
-                            <p className="mt-1 text-xs font-medium text-red-600">
+                            <p className="mt-1 text-xs font-medium text-red-600 dark:text-red-400">
                               Deadline passed
                             </p>
                           )}
@@ -624,42 +624,42 @@ export default function UniversityDetails() {
             ) : (
               <Card className="overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-slate-200 text-sm">
-                    <thead className="bg-slate-50">
+                  <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                    <thead className="bg-slate-50 dark:bg-slate-900/60">
                       <tr>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Test
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Overall
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Each band
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Level
                         </th>
-                        <th className="px-6 py-3 text-left font-semibold text-slate-700">
+                        <th className="px-6 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">
                           Notes
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white">
+                    <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-700 dark:bg-slate-800">
                       {tabData.Language.map((req) => (
-                        <tr key={req.id} className="hover:bg-slate-50">
-                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-800">
+                        <tr key={req.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-800 dark:text-white">
                             {req.test_name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-primary-700">
+                          <td className="px-6 py-4 whitespace-nowrap font-semibold text-primary-700 dark:text-primary-400">
                             {req.min_overall ?? '—'}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                          <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                             {req.min_each_band ?? '—'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge color="slate">{req.degree_level || 'All levels'}</Badge>
                           </td>
-                          <td className="px-6 py-4 text-slate-600">{req.notes || '—'}</td>
+                          <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{req.notes || '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -677,10 +677,10 @@ export default function UniversityDetails() {
             <Card className="p-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-800">
+                  <h2 className="text-lg font-bold text-slate-800 dark:text-white">
                     Scholarship Eligibility Checker
                   </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     Assessment assumes a 4.0 GPA scale
                   </p>
                 </div>
@@ -750,11 +750,11 @@ export default function UniversityDetails() {
 
               {/* Assessment Results */}
               {assessResult && (
-                <div className="mt-6 pt-6 border-t border-slate-200 space-y-6">
-                  <p className="text-sm text-slate-600">
+                <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 space-y-6">
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
                     Checked <strong>{assessResult.summary?.total || 0}</strong> scholarships — you
                     qualify for{' '}
-                    <strong className="text-emerald-700">
+                    <strong className="text-emerald-700 dark:text-emerald-400">
                       {assessResult.summary?.eligible_count || 0}
                     </strong>
                     .
@@ -763,11 +763,11 @@ export default function UniversityDetails() {
                   <div className="grid gap-6 md:grid-cols-2">
                     {/* Group 1: You may qualify */}
                     <div>
-                      <h3 className="text-sm font-bold text-emerald-700 mb-3">
+                      <h3 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 mb-3">
                         ✓ You may qualify ({assessResult.eligible?.length || 0})
                       </h3>
                       {!assessResult.eligible || assessResult.eligible.length === 0 ? (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           No scholarships matched all requirements for the scores entered.
                         </p>
                       ) : (
@@ -775,17 +775,17 @@ export default function UniversityDetails() {
                           {assessResult.eligible.map((sch) => (
                             <div
                               key={sch.id}
-                              className="rounded-xl border border-emerald-200 bg-emerald-50 p-4"
+                              className="rounded-xl border border-emerald-200 bg-emerald-50 dark:border-emerald-900/60 dark:bg-emerald-950/40 p-4"
                             >
                               <div className="flex items-start justify-between gap-2">
-                                <span className="font-semibold text-emerald-900 text-sm">
+                                <span className="font-semibold text-emerald-900 dark:text-emerald-200 text-sm">
                                   ✓ {sch.name}
                                 </span>
                                 {sch.coverage && (
                                   <Badge color="green">{sch.coverage}</Badge>
                                 )}
                               </div>
-                              <p className="mt-1 text-xs text-emerald-800">
+                              <p className="mt-1 text-xs text-emerald-800 dark:text-emerald-300">
                                 {sch.amount ? `Amount: ${formatMoney(sch.amount)} · ` : ''}
                                 Deadline: {formatDate(sch.deadline)}
                               </p>
@@ -797,12 +797,12 @@ export default function UniversityDetails() {
 
                     {/* Group 2: Not eligible yet */}
                     <div>
-                      <h3 className="text-sm font-bold text-slate-700 mb-3">
+                      <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">
                         Not eligible yet ({assessResult.not_eligible?.length || 0})
                       </h3>
                       {!assessResult.not_eligible ||
                       assessResult.not_eligible.length === 0 ? (
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           You meet the criteria for all listed scholarships!
                         </p>
                       ) : (
@@ -810,14 +810,14 @@ export default function UniversityDetails() {
                           {assessResult.not_eligible.map((sch) => (
                             <div
                               key={sch.id}
-                              className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+                              className="rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/80 p-4"
                             >
-                              <div className="font-semibold text-slate-800 text-sm">
+                              <div className="font-semibold text-slate-800 dark:text-slate-100 text-sm">
                                 {sch.name}
                               </div>
                               <ul className="mt-2 space-y-1 list-disc list-inside">
                                 {(sch.reasons || []).map((reason, idx) => (
-                                  <li key={idx} className="text-xs text-red-600">
+                                  <li key={idx} className="text-xs text-red-600 dark:text-red-400">
                                     {reason}
                                   </li>
                                 ))}
@@ -834,7 +834,7 @@ export default function UniversityDetails() {
 
             {/* (a) Full Scholarships List */}
             <div>
-              <h2 className="text-lg font-bold text-slate-800 mb-4">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">
                 Available Scholarships (University &amp; Country-Wide)
               </h2>
 
@@ -853,20 +853,20 @@ export default function UniversityDetails() {
                     <Card key={sch.id} className="p-6 flex flex-col justify-between">
                       <div>
                         <div className="flex items-start justify-between gap-3">
-                          <h3 className="text-base font-bold text-slate-800">{sch.name}</h3>
+                          <h3 className="text-base font-bold text-slate-800 dark:text-white">{sch.name}</h3>
                           <Badge color={sch.university_id ? 'blue' : 'amber'}>
                             {sch.university_id ? 'University' : 'Country-wide'}
                           </Badge>
                         </div>
 
                         {sch.description && (
-                          <p className="mt-2 text-sm text-slate-600">{sch.description}</p>
+                          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{sch.description}</p>
                         )}
 
-                        <dl className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-3 text-xs">
+                        <dl className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 grid grid-cols-2 gap-3 text-xs">
                           <div>
-                            <dt className="text-slate-500">Coverage / Amount</dt>
-                            <dd className="font-semibold text-primary-700 mt-0.5">
+                            <dt className="text-slate-500 dark:text-slate-400">Coverage / Amount</dt>
+                            <dd className="font-semibold text-primary-700 dark:text-primary-400 mt-0.5">
                               {sch.coverage || formatMoney(sch.amount)}
                               {sch.coverage && sch.amount
                                 ? ` (${formatMoney(sch.amount)})`
@@ -874,20 +874,20 @@ export default function UniversityDetails() {
                             </dd>
                           </div>
                           <div>
-                            <dt className="text-slate-500">Deadline</dt>
-                            <dd className="font-medium text-slate-800 mt-0.5">
+                            <dt className="text-slate-500 dark:text-slate-400">Deadline</dt>
+                            <dd className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">
                               {formatDate(sch.deadline)}
                             </dd>
                           </div>
                           <div>
-                            <dt className="text-slate-500">Minimum requirements</dt>
-                            <dd className="font-medium text-slate-800 mt-0.5">
+                            <dt className="text-slate-500 dark:text-slate-400">Minimum requirements</dt>
+                            <dd className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">
                               GPA: {sch.min_gpa ?? '—'} · IELTS: {sch.min_ielts ?? '—'}
                             </dd>
                           </div>
                           <div>
-                            <dt className="text-slate-500">Degree level</dt>
-                            <dd className="font-medium text-slate-800 mt-0.5">
+                            <dt className="text-slate-500 dark:text-slate-400">Degree level</dt>
+                            <dd className="font-medium text-slate-800 dark:text-slate-200 mt-0.5">
                               {sch.degree_level || 'Any level'}
                             </dd>
                           </div>
@@ -895,12 +895,12 @@ export default function UniversityDetails() {
                       </div>
 
                       {sch.url && (
-                        <div className="mt-4 pt-3 border-t border-slate-100">
+                        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
                           <a
                             href={sch.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs font-semibold text-primary-600 hover:text-primary-700"
+                            className="text-xs font-semibold text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
                           >
                             Official scholarship page ↗
                           </a>

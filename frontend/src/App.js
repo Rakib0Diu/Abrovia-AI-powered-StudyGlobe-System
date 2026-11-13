@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -38,45 +39,47 @@ function NotFound() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-          <Navbar />
-          <main className="min-h-screen flex-1">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/countries" element={<Countries />} />
-              <Route path="/universities" element={<Universities />} />
-              <Route path="/universities/:id" element={<UniversityDetails />} />
-              <Route path="/programs" element={<Programs />} />
-              <Route path="/scholarships" element={<Scholarships />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <Admin />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <footer className="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              © {new Date().getFullYear()} StudyGlobe — Abrovia: Your AI powered study companion
-            </div>
-          </footer>
-        </div>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
+            <Navbar />
+            <main className="min-h-screen flex-1">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/countries" element={<Countries />} />
+                <Route path="/universities" element={<Universities />} />
+                <Route path="/universities/:id" element={<UniversityDetails />} />
+                <Route path="/programs" element={<Programs />} />
+                <Route path="/scholarships" element={<Scholarships />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <Admin />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <footer className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-6 text-center text-sm text-slate-500 dark:text-slate-400 transition-colors duration-200">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                © {new Date().getFullYear()} StudyGlobe — Abrovia: Your AI powered study companion
+              </div>
+            </footer>
+          </div>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
