@@ -43,10 +43,10 @@ export function ErrorAlert({ message, className = '' }) {
 export function EmptyState({ title = 'No results found', message, action, className = '' }) {
   return (
     <div
-      className={`rounded-xl border-2 border-dashed border-slate-300 bg-white px-6 py-12 text-center ${className}`}
+      className={`rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-6 py-12 text-center ${className}`}
     >
-      <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
-      {message && <p className="mt-1 text-sm text-slate-500 max-w-md mx-auto">{message}</p>}
+      <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+      {message && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">{message}</p>}
       {action && <div className="mt-4 flex justify-center">{action}</div>}
     </div>
   );
@@ -58,8 +58,8 @@ export function PageHeader({ title, subtitle, action, className = '' }) {
       className={`mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between ${className}`}
     >
       <div>
-        <h1 className="text-3xl font-bold text-slate-800">{title}</h1>
-        {subtitle && <p className="mt-1 text-slate-500">{subtitle}</p>}
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">{title}</h1>
+        {subtitle && <p className="mt-1 text-slate-500 dark:text-slate-400">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -68,11 +68,11 @@ export function PageHeader({ title, subtitle, action, className = '' }) {
 
 export function Badge({ color = 'slate', children, className = '' }) {
   const colorMap = {
-    blue: 'bg-primary-50 text-primary-700 ring-1 ring-inset ring-primary-200',
-    green: 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200',
-    amber: 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200',
-    red: 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-200',
-    slate: 'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200',
+    blue: 'bg-primary-50 dark:bg-primary-950/50 text-primary-700 dark:text-primary-300 ring-1 ring-inset ring-primary-200 dark:ring-primary-800',
+    green: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 ring-1 ring-inset ring-emerald-200 dark:ring-emerald-800',
+    amber: 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 ring-1 ring-inset ring-amber-200 dark:ring-amber-800',
+    red: 'bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 ring-1 ring-inset ring-red-200 dark:ring-red-800',
+    slate: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 ring-1 ring-inset ring-slate-200 dark:ring-slate-600',
   };
 
   return (
@@ -89,7 +89,7 @@ export function Badge({ color = 'slate', children, className = '' }) {
 export function Card({ children, className = '', ...props }) {
   return (
     <div
-      className={`bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition ${className}`}
+      className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition ${className}`}
       {...props}
     >
       {children}
@@ -111,14 +111,14 @@ export function FormField({
       {label && (
         <label
           htmlFor={htmlFor}
-          className="block text-sm font-medium text-slate-700 mb-1"
+          className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
         >
           {label}
           {required && <span className="text-red-600 ml-0.5">*</span>}
         </label>
       )}
       {children}
-      {hint && !error && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {hint && !error && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
       {error && (
         <p role="alert" className="mt-1 text-xs text-red-600">
           {error}
@@ -127,4 +127,3 @@ export function FormField({
     </div>
   );
 }
-
