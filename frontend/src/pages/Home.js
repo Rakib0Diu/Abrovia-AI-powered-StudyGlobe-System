@@ -95,35 +95,90 @@ export default function Home() {
   return (
     <div>
       {/* 1. Hero Section */}
-      <section className="bg-gradient-to-br from-primary-600 to-primary-900 text-white py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
+      <section className="relative overflow-hidden text-white py-20 sm:py-28">
+        {/* Background image — authentic university campus */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=2000&q=85')",
+          }}
+          aria-hidden="true"
+        />
+        {/* Directional gradient overlay — darker navy at top/center, transparent at bottom */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(15,23,42,0.78) 0%, rgba(15,23,42,0.72) 45%, rgba(15,23,42,0.45) 100%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1
+            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight"
+            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}
+          >
             Plan your study-abroad journey
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-primary-100">
+          <p
+            className="mt-4 mx-auto text-lg font-medium"
+            style={{
+              color: '#F8FAFC',
+              maxWidth: '680px',
+              lineHeight: 1.6,
+              textShadow: '0 2px 10px rgba(0,0,0,0.3)',
+            }}
+          >
             Discover world-class universities, compare tuition and intake deadlines, check
             language requirements, and assess your scholarship eligibility in one place.
           </p>
 
-          {/* Search Form */}
+          {/* Unified floating search bar */}
           <form
             onSubmit={handleSearchSubmit}
-            className="mt-8 max-w-xl mx-auto flex flex-col sm:flex-row gap-3"
+            className="mt-10 mx-auto max-w-xl w-full flex flex-col sm:flex-row items-center bg-white dark:bg-slate-800"
+            style={{
+              padding: '6px',
+              borderRadius: '14px',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.25), 0 8px 10px -6px rgba(0,0,0,0.2)',
+            }}
           >
             <label htmlFor="hero-university-search" className="sr-only">
               Search universities by name or city
             </label>
-            <input
-              id="hero-university-search"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search universities by name or city (e.g. Oxford, Toronto, Munich)…"
-              className="flex-1 rounded-lg border-0 px-4 py-3 bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
-            />
+            <div className="relative flex-1 w-full">
+              {/* Magnifying glass icon */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center">
+                <svg
+                  className="h-5 w-5 text-slate-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <input
+                id="hero-university-search"
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search universities by name or city…"
+                className="w-full bg-transparent pl-11 pr-4 py-3 text-slate-800 dark:text-white placeholder-slate-400 border-0 focus:outline-none focus:ring-0 text-sm sm:text-base"
+              />
+            </div>
             <button
               type="submit"
-              className="bg-primary-500 hover:bg-primary-700 text-white font-semibold rounded-lg px-6 py-3 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full sm:w-auto shrink-0 bg-primary-600 hover:bg-primary-500 text-white font-semibold px-7 py-3 shadow-md hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              style={{ borderRadius: '10px' }}
             >
               Search
             </button>
@@ -133,14 +188,22 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/countries"
-              className="bg-white text-primary-700 hover:bg-primary-50 font-semibold rounded-lg px-6 py-3 shadow-sm transition"
+              className="bg-white text-primary-700 hover:bg-slate-50 font-semibold rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition duration-200"
             >
               Explore countries
             </Link>
             {!isAuthenticated && (
               <Link
                 to="/register"
-                className="bg-primary-700 hover:bg-primary-500 border border-primary-400 text-white font-semibold rounded-lg px-6 py-3 transition"
+                className="text-white font-semibold rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition duration-200"
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  border: '1px solid rgba(255,255,255,0.35)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.25)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; }}
               >
                 Create free account
               </Link>
